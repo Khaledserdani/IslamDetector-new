@@ -1,4 +1,5 @@
-name: .github/workflows/build-v0.1.yml
+name: Build IslamDetector v0.1 APK
+
 
 
 on:
