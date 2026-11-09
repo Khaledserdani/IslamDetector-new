@@ -1,12 +1,10 @@
-name: Build IslamDetector v0.1 APK
-
-
+name: Build IslamDetector APK
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'IslamDetector-v0.1-project.zip'
+      - 'IslamDetector-v0.0.zip'
       - '.github/workflows/build-v0.1.yml'
 
 permissions:
@@ -30,13 +28,20 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Extract v0.1 project
+      - name: Verify project archive
+        run: |
+          test -f IslamDetector-v0.0.zip
+          unzip -l IslamDetector-v0.0.zip
+
+      - name: Extract project
         run: |
           rm -rf build-project
           mkdir build-project
-          unzip -q IslamDetector-v0.1-project.zip -d build-project
+          unzip -q IslamDetector-v0.0.zip -d build-project
           test -f build-project/settings.gradle.kts
           test -f build-project/app/build.gradle.kts
+          test -f build-project/app/src/main/AndroidManifest.xml
+          test -f build-project/app/src/main/java/com/islamdetector/app/MainActivity.java
 
       - name: Build debug APK
         working-directory: build-project
@@ -45,11 +50,11 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p apk-output
-          cp build-project/app/build/outputs/apk/debug/app-debug.apk apk-output/IslamDetector-v0.1-debug.apk
+          cp build-project/app/build/outputs/apk/debug/app-debug.apk apk-output/IslamDetector-debug.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: IslamDetector-v0.1-APK
-          path: apk-output/IslamDetector-v0.1-debug.apk
+          name: IslamDetector-APK
+          path: apk-output/IslamDetector-debug.apk
           if-no-files-found: error
